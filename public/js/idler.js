@@ -1,19 +1,18 @@
 // Chatbox
-var chat = new WebSocket('ws://localhost:8080/chat');
+var ws = new ReconnectingWebSocket('ws://localhost:8080/');
 
-chat.onopen = function(e) {
+ws.onopen = function(e) {
     //var msgs = JSON.parse(e.data);
-    console.log("Connected to chat!");
+    console.log("Connected!");
     //
     $('#chatbar').prop('disabled', false);
     $('#chatbar').prop('placeholder', 'Your message');
-    chat.send(JSON.stringify({
-        isApi: true,
+    ws.send('/auth ' + JSON.stringify({
         session: g_session
     }));
 };
 
-chat.onmessage = function(e) {
+ws.onmessage = function(e) {
     var msg = JSON.parse(e.data);
     if (Array.isArray(msg)) {
         msg.forEach(function (m) {
@@ -44,7 +43,7 @@ function formatMessage(raw) {
 
 $('#chatbar').keypress(function(event) {
     if (event.which == 13) {
-        chat.send('/chat ' + $('#chatbar').val());
+        ws.send('/chat ' + $('#chatbar').val());
         $('#chatbar').val('');
     }
 });

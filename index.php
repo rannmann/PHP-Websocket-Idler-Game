@@ -35,6 +35,13 @@ if (!empty($_POST)) {
 
 // A legitimate logged-in user.
 $_SESSION['userid'] = 3;
+// We'll be running the websocket server on the same domain as the webserver, so we'll
+// be able to communicate through cookies.  IPB stores the session ID in the database.
+// If we store the session ID in a cookie as well, we can verify who a user is by finding
+// the user with that session id.  Easy.
+//
+// Since this is just testing though, we'll fill these values with placeholders and deal
+// with proper authentication at a later time (when it's actually on the right server).
 ?>
 <html>
 <head>
@@ -69,6 +76,7 @@ $_SESSION['userid'] = 3;
         })();
     </script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <script src="public/js/reconnecting-websocket.js"></script>
     <script src="public/js/idler.js"></script>
     <script>
         var g_session = '<?= session_id() ?>';

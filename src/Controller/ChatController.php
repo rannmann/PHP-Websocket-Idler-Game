@@ -1,73 +1,67 @@
 <?php
 namespace Idler\Controller;
 
-use Ratchet\MessageComponentInterface;
+//use Ratchet\MessageComponentInterface;
 use Ratchet\ConnectionInterface as Conn;
+use Idler\Controller\DefaultController;
 use Idler\Controller\AuthController;
 use Idler\AppConfig;
 
-class ChatController implements MessageComponentInterface {
-    private $logs;
+class ChatController extends DefaultController {
+    private $_logs;
 
     public function __construct() {
-        $this->logs = [];
+        $this->_logs = [];
         echo "Created new ChatController\n";
     }
 
     public function onOpen(Conn $conn) {
-        global $clients;
+        //$this->_sendSystemMessage($conn, "Connected to chat.");
         if (AuthController::isValid($conn)) {
-            $clients->attach($conn);
-            echo "New connection! ({$conn->resourceId})\n";
-            $conn->send(json_encode($this->logs));
+            $conn->send(json_encode($this->_logs));
         }
     }
 
     public function onMessage(Conn $from, $msg) {
-        global $clients;
+        if (!AuthController::isAuthenticated($from)) {
+            return;
+        }
         $msg = preg_replace('/^\/chat /', '', $msg, 1);
         $json = @json_decode($msg);
-        if ($json && !empty($json->isApi)) {
-            if (empty($from->username) && !empty($json->session)) {
-                $from->user_id = 1; // TODO
-                $from->username = 'rann'; // TODO
-                $from->sessionId = $json->session;
-                echo "{$from->resourceId} authenticated as {$from->username}";
-            }
-        } elseif (!empty($from->username)) { // Do we have a username for this user yet?
+        if (!empty($from->username)) { // Do we have a username for this user yet?
             // If we do, append to the chat logs their message
-            $this->logs[] = array(
+            $this->_logs[] = array(
                 "user" => $from->username,
                 "msg" => $msg,
                 "timestamp" => time()
             );
             // And send it
-            $this->sendMessage(end($this->logs));
+            $this->_sendUserMessageToAll(end($this->_logs));
             // Don't let our logs get too full.
-            if (count($this->logs) > AppConfig::$chatScrollback) {
-                array_shift($this->logs);
+            if (count($this->_logs) > AppConfig::$chatScrollback) {
+                array_shift($this->_logs);
             }
-        } /*else {
-            // If we don't this message will be their username
-            $from->username = $msg;
-        }*/
+        } else { // This shouldn't happen.
+            $this->_sendSystemMessage($from, "You are not authenticated.");
+        }
     }
 
     public function onClose(Conn $conn) {
-        global $clients;
-        // Detatch everything from everywhere
-        $clients->detach($conn);
+        $this->_sendSystemMessage($conn, "Disconnected from chat.");
     }
 
-    public function onError(Conn $conn, \Exception $e) {
-        $conn->close();
-        echo $e->getMessage() . "\n";
-    }
-
-    private function sendMessage($message) {
+    private function _sendUserMessageToAll($message) {
         global $clients;
         foreach ($clients as $user) {
             $user->send(json_encode($message));
         }
+    }
+    private function _sendSystemMessage($to, $message) {
+        $message = [
+            "user" => "SYSTEM",
+            "msg" => $message,
+            "timestamp" => time()
+        ];
+        $to->send(json_encode($message));
     }
 }
