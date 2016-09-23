@@ -16,6 +16,5 @@ class Level {
             $level++;
         }
         return $level - 1;
-
     }
 }
