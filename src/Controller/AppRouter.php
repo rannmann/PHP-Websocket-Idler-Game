@@ -54,6 +54,16 @@ class AppRouter implements MessageComponentInterface {
         }
     }
 
+    // Triggered every N seconds
+    public function handleTick() {
+        foreach($this->_routes as $routeController) {
+            if (method_exists($routeController, 'handleTick')) {
+                $routeController->handleTick();
+            }
+        }
+        echo "Tick Tock\n";
+    }
+
     // Channels messages must start with a / and contain only alpha chars.
     public function onMessage(Conn $from, $msg) {
         if (preg_match('/^\/[a-zA-Z]+/', $msg, $matches)) {

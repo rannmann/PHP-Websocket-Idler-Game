@@ -2,9 +2,11 @@
 namespace Idler\Controller;
 
 use Ratchet\ConnectionInterface as Conn;
+use Idler\AppConfig;
 use Idler\Controller\DefaultController;
 use Idler\Controller\AuthController;
-use Idler\AppConfig;
+use Idler\Model\Player;
+
 
 class GameController extends DefaultController {
     private $_items;
@@ -16,7 +18,19 @@ class GameController extends DefaultController {
     }
 
     public function onOpen(Conn $conn) {
+        // Todo: Make sure this user isn't already connected.  If so, we don't want to fight
+        // over the user's player object and end up with conflicting information or race conditions.
         // Todo: Fill user object with initial game data
+        $conn->player = new Player;
+    }
+
+    public function handleTick() {
+        global $clients;
+        foreach($clients as $client) {
+            // Add to their online/total timers.
+            $client->player->gameTime++;
+            $client->player->sessionTime++;
+        }
     }
 
     public function onMessage(Conn $from, $msg) {
@@ -44,7 +58,7 @@ class GameController extends DefaultController {
     }
 
     public function onClose(Conn $conn) {
-        // DB save?
+        // Save the player info in its entirety.
     }
 
     public function registerNewItem($itemSchema) {
