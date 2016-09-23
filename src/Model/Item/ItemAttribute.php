@@ -42,5 +42,6 @@ class ItemAttribute {
     const TRAIT_CONSUMABLE = 3; // Can be "used" to receive some sort of buff
     const TRAIT_PURCHASABLE = 4; // Can be purchased from an NPC (requires extra information including price, which NPC, minimum reqs)
     const TRAIT_EQUIPPABLE = 5; // Can be worn. Requires extra information such as slot and skill modifiers
+    const TRAIT_VENDORABLE = 6; // Can be sold back to the game
 
 }
