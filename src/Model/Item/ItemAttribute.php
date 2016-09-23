@@ -25,4 +25,22 @@ class ItemAttribute {
 
     public static $qualityColor = array(); // Todo
 
+    const ORIGIN_FOUND = 1;
+    const ORIGIN_PURCHASED = 2;
+    const ORIGIN_TRADED = 3;
+    const ORIGIN_CRAFTED = 4;
+
+    public static $originName = array(
+        self::ORIGIN_FOUND => 'Found',
+        self::ORIGIN_PURCHASED => 'Purchased',
+        self::ORIGIN_TRADED => 'Traded',
+        self::ORIGIN_CRAFTED => 'Crafted',
+    );
+
+    // Do we want to store as a bitmask, or an array of attributes?
+    // A bitmask will likely limit us to 31 traits, but will save marginal memory.
+    const TRAIT_CRAFTABLE = 1 << 0;
+    const TRAIT_TRADABLE = 1 << 1;
+    const TRAIT_CONSUMABLE = 1 << 2;
+
 }
