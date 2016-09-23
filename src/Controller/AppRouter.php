@@ -27,8 +27,15 @@ class AppRouter implements MessageComponentInterface {
         $this->_routes = $routes;
 
         foreach($routes as $route => $controllerName) {
+            $opts = [];
+            // Did they pass an array of options instead of just a name?
+            if (is_array($controllerName)) {
+                $opts = $controllerName;
+                $controllerName = $opts['name'];
+                unset($opts['name']);
+            }
             $controllerName = "Idler\\Controller\\" . $controllerName;
-            $this->_routes[$route] = new $controllerName();
+            $this->_routes[$route] = new $controllerName($opts);
         }
         echo "Initialized app router with " . count($routes) . " routes.\n";
     }

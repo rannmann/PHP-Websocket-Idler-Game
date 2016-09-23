@@ -11,7 +11,12 @@ $clients = new \SplObjectStorage;
 
 $appRouter = new AppRouter([
     '/auth' => 'AuthController',
-    '/chat' => 'ChatController'
+    '/chat' => 'ChatController',
+    '/g' => array(
+        'name' => 'GameController',
+        'skills' => AppConfig::$enabledSkills,
+        'items' => AppConfig::$enabledItems
+    )
 ]);
 
 $app = new Ratchet\App(

@@ -12,4 +12,6 @@ class DefaultAppConfig
         'user' => '',
         'password' => ''
     );
+    public static $enabledSkills = array();
+    public static $enabledItems = array();
 }
