@@ -19,6 +19,8 @@ $appRouter = new AppRouter([
         'items' => AppConfig::$enabledItems
     )
 ]);
+// Use our own loop interface otherwise it only exists as a property
+// that we can't access outside of App
 $loop = LoopFactory::create();
 
 $app = new Ratchet\App(
@@ -34,7 +36,7 @@ $app->route('/', $appRouter, array('*'));
 
 
 // Start the gameserver event loop
-$loop->addPeriodicTimer(1, function () {
+$loop->addPeriodicTimer(AppConfig::$tickInterval, function () {
     global $appRouter;
     $appRouter->handleTick();
 });
