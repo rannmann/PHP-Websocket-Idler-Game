@@ -5,7 +5,6 @@ class DefaultAppConfig
 {
     public static $domain = 'localhost';
     public static $port = 8080;
-    public static $authEndpoint = 'localhost/ws_auth.php';
     public static $chatScrollback = 200; // # of lines to store for new connects
     public static $db = array(
         'server' => 'localhost',
