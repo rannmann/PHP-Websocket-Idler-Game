@@ -37,10 +37,10 @@ class ItemAttribute {
         self::ORIGIN_CRAFTED => 'Crafted',
     );
 
-    // Do we want to store as a bitmask, or an array of attributes?
-    // A bitmask will likely limit us to 31 traits, but will save marginal memory.
-    const TRAIT_CRAFTABLE = 1 << 0;
-    const TRAIT_TRADABLE = 1 << 1;
-    const TRAIT_CONSUMABLE = 1 << 2;
+    const TRAIT_CRAFTABLE = 1; // Can be crafted into something else
+    const TRAIT_TRADABLE = 2; // Can be traded on the market
+    const TRAIT_CONSUMABLE = 3; // Can be "used" to receive some sort of buff
+    const TRAIT_PURCHASABLE = 4; // Can be purchased from an NPC (requires extra information including price, which NPC, minimum reqs)
+    const TRAIT_EQUIPPABLE = 5; // Can be worn. Requires extra information such as slot and skill modifiers
 
 }
